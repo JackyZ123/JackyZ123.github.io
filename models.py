@@ -11,11 +11,14 @@ class Map(db.Model):
 
     size_x = db.Column(db.Integer)
     size_y = db.Column(db.Integer)
-    translate_x = db.Column(db.Integer)
-    translate_y = db.Column(db.Integer)
+    offset_x = db.Column(db.Float)
+    offset_y = db.Column(db.Float)
 
     pixels_x = db.Column(db.Integer)
     pixels_y = db.Column(db.Integer)
+
+    first_up = db.Column(db.Boolean)
+    radius = db.Column(db.Float)
 
     nodes = db.relationship("Node", back_populates="map")
 

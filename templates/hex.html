@@ -1,8 +1,37 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="background" style="background-image: url({{map_location}}); height: {{aspect_ratio}}vw;">
-    bg
-</div>
+<svg id="Background" class="background" style="background-image: url({{map_location}});">
+</svg>
+
+<script src="/static/scripts/map.js"></script>
+<script>
+    var multiplier = 1.25433;
+    var x_mult = .9944;
+
+    SetHexRadius({{ radius }} * multiplier);
+
+    var width = 100;
+    var height = {{ aspect_ratio }};
+
+    setBackgroundZoom(100);
+
+    var first_up;
+
+    if ({{ first_up }} == 0) {
+        first_up = true;
+    }
+    else {
+        first_up = false;
+    }
+
+    var offset;
+    SetOffset({{ offset[0] }} * hex_radius * multiplier, {{ offset[1] }} * hex_radius * multiplier);
+    // SetOffset(0.95 * hex_radius * multiplier, 0.72 * hex_radius * multiplier);
+
+    function SetOffset(offset_x, offset_y) {
+        offset = { x: offset_x, y: offset_y };
+    }
+</script>
 
 {% endblock %}

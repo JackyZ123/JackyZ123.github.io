@@ -21,10 +21,14 @@ def hex():
 
     cur_map = Map.query.filter_by(name="Chult").first()
     aspect_ratio = cur_map.pixels_y / cur_map.pixels_x * 100
+    offset = [cur_map.offset_x, cur_map.offset_y]
 
     return render_template("hex.html",
                            map_location=cur_map.location,
-                           aspect_ratio=aspect_ratio)
+                           aspect_ratio=aspect_ratio,
+                           radius=cur_map.radius,
+                           first_up=1 if cur_map.first_up else 0,
+                           offset=offset)
 
 
 if __name__ == "__main__":
