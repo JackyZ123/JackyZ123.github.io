@@ -32,18 +32,6 @@ class Node(db.Model):
     x = db.Column(db.Integer)
     y = db.Column(db.Integer)
     color = db.Column(db.String(120))
+    note = db.Column(db.Text)
 
     map = db.relationship("Map", back_populates="nodes")
-    notes = db.relationship("NodeNote", back_populates="node")
-
-
-class NodeNote(db.Model):
-    """The notes for a node"""
-    __tablename__ = "NodeNote"
-
-    id = db.Column(db.Integer, primary_key=True)
-    nid = db.Column(db.Integer, db.ForeignKey("Node.id"))
-    title = db.Column(db.String(120))
-    text = db.Column(db.Text)
-
-    node = db.relationship("Node", back_populates="notes")

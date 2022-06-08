@@ -6,6 +6,8 @@ var current_node;
 
 var background = document.getElementById("Background");
 
+var highlight_index = { x: -1, y: -1 };
+
 var hex_radius;
 var hex_height;
 
@@ -16,13 +18,16 @@ function SetHexRadius(radius) {
 
 // get mouse position
 
-document.onmousemove = handleMouseMove;
+background.onmousemove = handleMouseMove;
 setInterval(getMousePosition, 50); // setInterval repeats every X ms
 
 function moveScreen() {
     setBackgroundCorner();
     setBackgroundZoom();
-    closestHex();
+    drawHex();
+    HighlightHex("pink");
+    SetNewPanel(highlight_index);
+    reloadHexes();
 }
 
 function handleMouseMove(event) {
@@ -62,7 +67,8 @@ function handleMouseMove(event) {
         moveScreen();
     }
 
-    drawHex(closestHex(), hex_radius * zoom_percent / 100);
+    drawHex();
+    SetNewPanel(highlight_index);
 }
 
 function getMousePosition() {
@@ -75,15 +81,15 @@ function setBackgroundCorner() {
 }
 
 function setBackgroundZoom() {
-    background.style.width = zoom_percent * width / 100 + "vw";
-    background.style.height = zoom_percent * height / 100 + "vw";
+    background.style.width = zoom_percent * width / 100 + "px";
+    background.style.height = zoom_percent * height / 100 + "px";
 
-    background.width = zoom_percent * width / 100 + "vw";
-    background.height = zoom_percent * height / 100 * "vw";
+    background.width = zoom_percent * width / 100 + "px";
+    background.height = zoom_percent * height / 100 * "px";
 }
 
 // zoom
-window.addEventListener("wheel", (event) => {
+background.addEventListener("wheel", (event) => {
     var change = event.deltaY / 12.5;
     var pos = getMousePosition();
 
@@ -101,25 +107,41 @@ window.addEventListener("wheel", (event) => {
     bg_align = { x: bg_align.x + distance.x, y: bg_align.y + distance.y };
 
     moveScreen();
-    drawHex(closestHex(), hex_radius * zoom_percent / 100);
+    drawHex();
 
 });
 
 // pan image
 var is_panning = false;
 
-window.addEventListener("mousedown", (event) => {
+background.addEventListener("mousedown", (event) => {
     if (event.button == 1) {
         is_panning = true;
     }
 
     if (event.button == 0) {
-        console.log("Node: " + current_node.x + " " + current_node.y);
+        // console.log("Node: " + current_node.x + " " + current_node.y);
+
+        is_panning = true;
+
+        highlight_index = current_node;
+        HighlightHex("pink");
+        SetNewPanel(current_node);
+
+        panel.setAttribute("style", "display:flex;");
+
+        if (current_node.x == -1 && current_node.y == -1) {
+            if (document.getElementById("tile highlight") != null) {
+                document.getElementById("tile highlight").remove();
+            }
+        }
+
+        document.innerHTML = document.innerHTML;
     }
 });
 
 window.addEventListener("mouseup", (event) => {
-    if (event.button == 1) {
+    if (event.button == 1 || event.button == 0) {
         is_panning = false;
     }
 });
@@ -251,21 +273,30 @@ function closestHex() {
         };
     }
 
-    // current_node = top_left_hex_index;
-
-
-    // console.log(top);
-    // console.log(MapToScreenPosition(top_left_hex));
-    // console.log(distance_top_left);
+    if (current_node.x < 1 || current_node.x > map_dimensions.x || current_node.y < 1 || current_node.y > map_dimensions.y) {
+        current_node = {
+            x: -1,
+            y: -1
+        };
+        return current_node;
+    }
 
     return closest_centre;
     // return right_hex;
 }
 
-function drawHex(centre, radius) {
+function drawHex() {
+    var centre, radius;
+    radius = hex_radius * zoom_percent / 100;
+    centre = closestHex();
 
     if (document.getElementById("cursor marker") != null) {
         document.getElementById("cursor marker").remove();
+    }
+
+    if (centre.x == -1 && centre.y == -1) {
+        background.innerHTML = background.innerHTML;
+        return;
     }
 
     var marker = document.createElement("polygon");
@@ -281,6 +312,102 @@ function drawHex(centre, radius) {
         (centre.x - radius * x_mult / 2) + "," + (centre.y - height));
     marker.setAttribute("id", "cursor marker");
     marker.setAttribute("style", "fill:None;stroke:black;stroke-width:3");
+
+
+    background.appendChild(marker);
+
+    background.innerHTML = background.innerHTML;
+}
+
+function GetColor(color) {
+    if (color == "none") {
+        return "rgb(0,0,0,0)";
+    }
+    else if (color == "red") {
+        return "rgb(255,0,0,0.5)"
+    }
+    else if (color == "orange") {
+        return "rgb(255,165,0,0.5)"
+    }
+    else if (color == "yellow") {
+        return "rgb(255,255,0,0.5)"
+    }
+    else if (color == "green") {
+        return "rgb(0,255,0,0.5)"
+    }
+    else if (color == "cyan") {
+        return "rgb(0,255,255,0.5)"
+    }
+    else if (color == "blue") {
+        return "rgb(0,0,255,0.5)"
+    }
+    else if (color == "purple") {
+        return "rgb(255,0,255,0.5)"
+    }
+    else if (color == "black") {
+        return "rgb(0,0,0,0.7)"
+    }
+    else if (color == "grey") {
+        return "rgb(80,80,80,0.7)"
+    }
+    else if (color = "pink") {
+        return "rgb(255,192,203,0.8)";
+    }
+    else {
+        return "rgb(0,0,0,1)"
+    }
+}
+
+function HighlightHex(color) {
+    var centre, radius, height;
+    radius = hex_radius;
+    height = Math.sqrt(3) * radius;
+    centre = highlight_index;
+
+    if (centre.x == -1 && centre.y == -1) {
+        return;
+    }
+
+    if ((centre.x % 2 == 0 && first_up) || (centre.x % 2 == 1 && !first_up)) {
+        // no extra y offset
+        // this is position relative to top corner
+        centre = {
+            x: centre.x * 1.5 * radius * x_mult + offset.x,
+            y: centre.y * height + height / 2 + offset.y
+        };
+    }
+    else {
+        centre = {
+            x: centre.x * 1.5 * radius * x_mult + offset.x,
+            y: centre.y * height + offset.y
+        };
+    }
+
+    centre = {
+        x: centre.x * zoom_percent / 100,
+        y: centre.y * zoom_percent / 100
+    };
+
+    if (document.getElementById("tile highlight") != null) {
+        document.getElementById("tile highlight").remove();
+    }
+
+
+
+    var marker = document.createElement("polygon");
+
+    var radius = radius * zoom_percent / 100;
+    var height = Math.sqrt(3) * radius / 2;
+
+    marker.setAttribute('points',
+        (centre.x - radius * x_mult) + "," + centre.y + " " +
+        (centre.x - radius * x_mult / 2) + "," + (centre.y + height) + " " +
+        (centre.x + radius * x_mult / 2) + "," + (centre.y + height) + " " +
+        (centre.x + radius * x_mult) + "," + centre.y + " " +
+        (centre.x + radius * x_mult / 2) + "," + (centre.y - height) + " " +
+        (centre.x - radius * x_mult / 2) + "," + (centre.y - height));
+    marker.setAttribute("id", "tile highlight");
+    marker.setAttribute("style", "fill:" + GetColor(color) + ";stroke-width:3");
 
 
     background.appendChild(marker);

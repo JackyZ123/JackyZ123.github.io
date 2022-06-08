@@ -1,11 +1,80 @@
 body {
     padding: 0px;
     margin: 0px;
+    z-index: 10;
 }
 
 .background {
+    z-index: -10;
     background-repeat: no-repeat;
     background-size: contain;
     overflow: hidden;
     position: fixed;
+}
+
+.info-panel {
+    background-color: rgb(200, 200, 200);
+    float: right;
+    width: 20vw;
+    height: calc(100vh - 2em);
+    display: none;
+    flex-flow: column;
+    padding: 1em;
+}
+
+.info-panel h2,
+.info-panel p {
+    padding-left: 25px;
+}
+
+.color-button {
+    margin: 2px;
+    border: none;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    height: 10px;
+    width: 10px;
+    border-radius: 8px;
+}
+
+textarea {
+    width: calc(95% - 1em);
+    float: right;
+    resize: none;
+    margin-right: 5px;
+    margin-top: 1em;
+}
+
+.delete {
+    background-color: rgb(200, 200, 200);
+    width: 100%;
+    bottom: 0;
+    position: fixed;
+    height: 3em;
+}
+
+.delete-button,
+.cancel-button,
+.save-button {
+    padding-left: 1em;
+    padding-right: 1em;
+    border-radius: 8px;
+    bottom: 1em;
+    position: fixed;
+}
+
+.delete-button {
+    background-color: red;
+}
+
+.cancel-button {
+    background-color: grey;
+    right: 1em;
+}
+
+.save-button {
+    background-color: rgb(0, 255, 0);
 }

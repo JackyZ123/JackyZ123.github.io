@@ -11,10 +11,11 @@
 
     SetHexRadius({{ radius }} * multiplier);
 
-    var width = 100;
-    var height = {{ aspect_ratio }};
+    var width = 1536;
+    var height = {{ aspect_ratio }} * width;
 
-    setBackgroundZoom(100);
+
+    setBackgroundZoom();
 
     var first_up;
 
@@ -31,6 +32,16 @@
 
     function SetOffset(offset_x, offset_y) {
         offset = { x: offset_x, y: offset_y };
+    }
+
+    var map_dimensions;
+    SetDimensions({{ node_dimensions }});
+
+    function SetDimensions(dimensions) {
+        map_dimensions = {
+            x: dimensions[0],
+            y: dimensions[1]
+        };
     }
 </script>
 

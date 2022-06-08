@@ -1,0 +1,36 @@
+<div id="info-panel" class="info-panel">
+    <h2 id="tile-title">No Tile Selected</h2>
+
+    <div id="tile-contents">
+        <div id="color-button">
+            <div class="color-button" style="background-color: rgb(255,0,0);" onclick="SetColor('red')"></div>
+            <div class="color-button" style="background-color: rgb(255,165,0);" onclick="SetColor('orange')"></div>
+            <div class="color-button" style="background-color: rgb(255,255,0);" onclick="SetColor('yellow')"></div>
+            <div class="color-button" style="background-color: rgb(0,255,0);" onclick="SetColor('green')"></div>
+            <div class="color-button" style="background-color: rgb(0,255,255);" onclick="SetColor('cyan')"></div>
+            <div class="color-button" style="background-color: rgb(0,0,255);" onclick="SetColor('blue')"></div>
+            <div class="color-button" style="background-color: rgb(255,0,255);" onclick="SetColor('purple')"></div>
+            <div class="color-button" style="background-color: rgb(80,80,80);" onclick="SetColor('grey')"></div>
+            <div class="color-button" style="background-color: rgb(0,0,0);" onclick="SetColor('black')"></div>
+        </div>
+        <div id="notes" style="height: calc(100% - 6em);">
+        </div>
+        <div id="delete" class="delete">
+            <div class="save-button">Save Tile</div>
+            <div class="delete-button" onclick="SetDelete(true)" style="right: 1em;">DELETE TILE</div>
+            <div class="cancel-button" onclick="SetDelete(false)" style="display: none; right: 1em;">Cancel</div>
+            <div class="delete-button" onclick="DeleteTile()" style="display: none;">DELETE</div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/scripts/info-panel.js"></script>
+<script>
+
+    var tile_data_list = [];
+
+    SetTileData("{{ tiles }}");
+    var mapName = "{{ map_name }}";
+
+    // tile_data = {{ tiles }};
+</script>
